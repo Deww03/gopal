@@ -6,20 +6,26 @@
               <span class="menu-title">Dashboard</span>
             </a>
           </li>
-          <li class="nav-item nav-category">Hutang</li>
+          <li class="nav-item nav-category">Transaksi</li>
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
               <i class="menu-icon mdi mdi-book-open-page-variant"></i>
-              <span class="menu-title">Data Hutang</span>
+              <span class="menu-title">Data Utang</span>
               <i class="menu-arrow"></i> 
             </a>
             <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="semuaHutang.php">Semua Hutang</a></li>
-                <li class="nav-item"> <a class="nav-link" href="sudahLunas.php">Sudah Lunas</a></li>
-                <li class="nav-item"> <a class="nav-link" href="belumLunas.php">Belum Lunas</a></li>
+                <li class="nav-item"> <a class="nav-link" href="semua_utang.php">Semua Utang</a></li>
+                <li class="nav-item"> <a class="nav-link" href="sudah_lunas.php">Sudah Lunas</a></li>
+                <li class="nav-item"> <a class="nav-link" href="belum_lunas.php">Belum Lunas</a></li>
               </ul>
             </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="bayar.php">
+              <i class="menu-icon mdi mdi-cash-multiple"></i>
+              <span class="menu-title">Pembayaran</span>
+            </a>
           </li>
           <li class="nav-item nav-category">Profil</li>
           <li class="nav-item">
@@ -37,15 +43,9 @@
           </li>
           <li class="nav-item nav-category">Dokumentasi</li>
           <li class="nav-item">
-            <a class="nav-link" href="transaksi.php">
+            <a class="nav-link" href="laporan_utang.php">
               <i class="menu-icon mdi mdi-file-document"></i>
-              <span class="menu-title">Transaksi</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="laporanHutang.php">
-              <i class="menu-icon mdi mdi-file-document"></i>
-              <span class="menu-title">Laporan Hutang</span>
+              <span class="menu-title">Laporan Utang</span>
             </a>
           </li>
         </ul>

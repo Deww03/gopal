@@ -45,6 +45,18 @@
   })();
 </script>
 
+<script>
+document.getElementById('searchInput').addEventListener('keypress', function (e) {
+  if (e.key === 'Enter') {
+    var search = this.value.trim();
+    if (search !== '') {
+      window.location.href = "?search=" + encodeURIComponent(search);
+    }
+  }
+});
+</script>
+
+
 
 <footer class="footer">
     <div class="d-sm-flex justify-content-center justify-content-sm-between">

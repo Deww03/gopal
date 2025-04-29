@@ -1,6 +1,9 @@
 <?php
 include '../cek_login.php';
 include '../koneksi/koneksi.php';
+
+// Ambil parameter pencarian
+$search = isset($_GET['search']) ? $_GET['search'] : '';
 ?>
 
 <!DOCTYPE html>
@@ -88,7 +91,7 @@ include '../koneksi/koneksi.php';
               <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="mb-0">Pelanggan</h4>
+                        <h4 class="mb-0">Data Pelanggan</h4>
                         <button 
                         type="button" 
                         class="btn btn-inverse-primary" 
@@ -97,7 +100,33 @@ include '../koneksi/koneksi.php';
                         Tambah Pelanggan
                         </button>
                     </div>
-                    <p>Berikut ini data data Pelanggan</p>
+
+                    <!-- 🔍 Input Pencarian -->
+                    <form method="GET" class="d-flex align-items-center gap-2 mb-3" style="max-width: 100%;">
+                      <input 
+                          type="text" 
+                          id="searchInput" 
+                          name="search"
+                          class="form-control form-control-sm w-auto" 
+                          placeholder="Cari pelanggan..." 
+                          value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" 
+                          style="max-width: 350px; padding: 0.5rem;"
+                      >
+
+                      <?php if (!empty($_GET['search'])) { ?>
+                          <button type="submit" class="btn btn-inverse-info" style="padding: 0.5rem 1rem;">
+                              Cari
+                          </button>
+                          <a href="pelanggan.php" class="btn btn-inverse-danger" style="padding: 0.5rem 1rem;">
+                              Batal Cari
+                          </a>
+                      <?php } else { ?>
+                          <button type="submit" class="btn btn-inverse-info" style="padding: 0.5rem 1rem;">
+                              Cari
+                          </button>
+                      <?php } ?>
+                  </form>
+
                     <!-- Modal Tambah Pelanggan -->
                     <div
                       class="modal fade"
@@ -181,20 +210,47 @@ include '../koneksi/koneksi.php';
                           <th style="width: 21%;">Tindakan</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody id="pelangganTable">
                       <?php
-                          include "../koneksi/koneksi.php";
-                          
                           // Tentukan jumlah data per halaman
                           $limit = 5;
                           
                           // Ambil halaman saat ini dari URL, jika tidak ada, set ke 1
                           $page = isset($_GET['page']) ? $_GET['page'] : 1;
-                          $start = ($page - 1) * $limit; // Hitung data yang dimulai dari halaman tertentu
+                          $start = ($page - 1) * $limit; // Data awal dari halaman saat ini
                           
-                          // Query untuk mengambil data pelanggan dengan batasan
-                          $query = "SELECT * FROM pelanggan LIMIT $start, $limit";
-                          $result = mysqli_query($koneksi, $query);
+                          if ($search != '') {
+                              // Jika ada pencarian
+                              $query_total = "SELECT COUNT(*) FROM pelanggan WHERE nama_pelanggan LIKE '%$search%' OR no_hp_pelanggan LIKE '%$search%'";
+                              $result_total = mysqli_query($koneksi, $query_total);
+                              $row_total = mysqli_fetch_array($result_total);
+                              $total_records = $row_total[0];
+                          
+                              // Ambil semua data hasil pencarian tanpa limit
+                              $query = "SELECT * FROM pelanggan WHERE nama_pelanggan LIKE '%$search%' OR no_hp_pelanggan LIKE '%$search%'";
+                              $result = mysqli_query($koneksi, $query);
+                          
+                              // Untuk menampilkan "Menampilkan x sampai y"
+                              $start_range = 1;
+                              $end_range = $total_records;
+                          
+                          } else {
+                              // Jika tidak ada pencarian
+                              $query_total = "SELECT COUNT(*) FROM pelanggan";
+                              $result_total = mysqli_query($koneksi, $query_total);
+                              $row_total = mysqli_fetch_array($result_total);
+                              $total_records = $row_total[0];
+                          
+                              $total_pages = ceil($total_records / $limit);
+                          
+                              // Ambil data terbatas dengan limit
+                              $query = "SELECT * FROM pelanggan LIMIT $start, $limit";
+                              $result = mysqli_query($koneksi, $query);
+                          
+                              // Hitung range tampil
+                              $start_range = $start + 1;
+                              $end_range = min($start + $limit, $total_records);
+                          }
                           
                           // Menampilkan data dalam tabel
                           while ($row = mysqli_fetch_array($result)) {
@@ -207,10 +263,10 @@ include '../koneksi/koneksi.php';
                             echo "<td>";
                             echo "<div class='form-button-action'>";
                             echo "<button type='button' class='btn btn-inverse-success me-2' data-bs-toggle='modal' data-bs-target='#editRowModal$id'>";
-                            echo "<i class='fa fa-edit'></i> Edit";
+                            echo "Edit";
                             echo "</button>";
                             echo "<button type='button' class='btn btn-inverse-danger' data-bs-toggle='modal' data-bs-target='#deleteRowModal$id'>";
-                            echo "<i class='fa fa-times'></i> Hapus";
+                            echo "Hapus";
                             echo "</button>";
                             echo "</div>";
                             echo "</td>";
@@ -234,69 +290,82 @@ include '../koneksi/koneksi.php';
                     </table>
 
                     <?php
-                      // Reset ulang hasil query untuk loop kedua
-                      mysqli_data_seek($result, 0); 
+                    // Reset ulang hasil query untuk loop kedua
+                    mysqli_data_seek($result, 0); 
 
-                      while ($row = mysqli_fetch_array($result)) {
-                        $id = $row['id_pelanggan'];
-                        $name = $row['nama_pelanggan'];
-                        $no_hp = $row['no_hp_pelanggan'];
-                        ?>
+                    while ($row = mysqli_fetch_array($result)) {
+                      $id = $row['id_pelanggan'];
+                      $name = $row['nama_pelanggan'];
+                      $no_hp = $row['no_hp_pelanggan'];
 
-                        <!-- Modal Edit -->
-                        <div class="modal fade" id="editRowModal<?php echo $id; ?>" tabindex="-1" aria-labelledby="editModalLabel<?php echo $id; ?>" aria-hidden="true">
-                          <div class="modal-dialog">
-                            <div class="modal-content">
-                              <form action="edit_pelanggan.php" method="POST">
-                                <div class="modal-header">
-                                  <h5 class="modal-title" id="editModalLabel<?php echo $id; ?>">Edit Data Pelanggan</h5>
-                                  <button type="button" class="btn-inverse-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                  <input type="hidden" name="id_pelanggan" value="<?php echo $id; ?>">
-                                  <div class="form-group form-group-default">
-                                    <label>Nama</label>
-                                    <input type="text" name="nama_pelanggan" class="form-control" value="<?php echo $name; ?>">
-                                  </div>
-                                  <div class="form-group form-group-default">
-                                    <label>No HP</label>
-                                    <input type="text" name="no_hp_pelanggan" class="form-control" value="<?php echo $no_hp; ?>">
-                                  </div>
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="submit" class="btn btn-inverse-primary">Simpan</button>
-                                  <button type="button" class="btn btn-inverse-danger" data-bs-dismiss="modal">Batal</button>
-                                </div>
-                              </form>
+                      // Cek apakah pelanggan memiliki utang
+                      $query_check_utang = "SELECT COUNT(*) FROM utang WHERE id_pelanggan = '$id'";
+                      $result_check_utang = mysqli_query($koneksi, $query_check_utang);
+                      $row_check_utang = mysqli_fetch_array($result_check_utang);
+                      $has_utang = $row_check_utang[0] > 0;
+                    ?>
+
+                    <!-- Modal Edit -->
+                    <div class="modal fade" id="editRowModal<?php echo $id; ?>" tabindex="-1" aria-labelledby="editModalLabel<?php echo $id; ?>" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <form action="edit_pelanggan.php" method="POST">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="editModalLabel<?php echo $id; ?>">Edit Data Pelanggan</h5>
+                              <button type="button" class="btn-inverse-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                          </div>
-                        </div>
-
-                        <!-- Modal Hapus -->
-                        <div class="modal fade" id="deleteRowModal<?php echo $id; ?>" tabindex="-1" aria-labelledby="deleteModalLabel<?php echo $id; ?>" aria-hidden="true">
-                          <div class="modal-dialog modal-sm">
-                            <div class="modal-content">
-                              <form action="hapus_pelanggan.php" method="POST">
-                                <div class="modal-header">
-                                  <h5 class="modal-title" id="deleteModalLabel<?php echo $id; ?>">Hapus Data</h5>
-                                  <button type="button" class="btn-inverse-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                  <input type="hidden" name="id_pelanggan" value="<?php echo $id; ?>">
-                                  <p>Yakin ingin menghapus data <strong><?php echo $name; ?></strong>?</p>
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="submit" class="btn btn-inverse-danger">Hapus</button>
-                                  <button type="button" class="btn btn-inverse-info" data-bs-dismiss="modal">Batal</button>
-                                </div>
-                              </form>
+                            <div class="modal-body">
+                              <input type="hidden" name="id_pelanggan" value="<?php echo $id; ?>">
+                              <div class="form-group form-group-default">
+                                <label>Nama</label>
+                                <input type="text" name="nama_pelanggan" class="form-control" value="<?php echo $name; ?>">
+                              </div>
+                              <div class="form-group form-group-default">
+                                <label>No HP</label>
+                                <input type="text" name="no_hp_pelanggan" class="form-control" value="<?php echo $no_hp; ?>">
+                              </div>
                             </div>
-                          </div>
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-inverse-primary">Simpan</button>
+                              <button type="button" class="btn btn-inverse-danger" data-bs-dismiss="modal">Batal</button>
+                            </div>
+                          </form>
                         </div>
+                      </div>
+                    </div>
 
-                      <?php } ?>
+                    <!-- Modal Hapus -->
+                    <div class="modal fade" id="deleteRowModal<?php echo $id; ?>" tabindex="-1" aria-labelledby="deleteModalLabel<?php echo $id; ?>" aria-hidden="true">
+                      <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                          <form action="hapus_pelanggan.php" method="POST">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="deleteModalLabel<?php echo $id; ?>">Hapus Data</h5>
+                              <button type="button" class="btn-inverse-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <input type="hidden" name="id_pelanggan" value="<?php echo $id; ?>">
+                              <?php if ($has_utang): ?>
+                                <p><strong><?php echo $name; ?></strong> memiliki utang dan tidak dapat dihapus.</p>
+                              <?php else: ?>
+                                <p>Yakin ingin menghapus data <strong><?php echo $name; ?></strong>?</p>
+                              <?php endif; ?>
+                            </div>
+                            <div class="modal-footer">
+                              <?php if (!$has_utang): ?>
+                                <button type="submit" class="btn btn-inverse-danger">Hapus</button>
+                              <?php endif; ?>
+                              <button type="button" class="btn btn-inverse-info" data-bs-dismiss="modal">Batal</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
 
-                      
+                    <?php } ?>
+
+
+                      <?php if ($search == '') { ?>
                       <!-- Teks dan Pagination terpisah di 2 kolom -->
                       <div class="d-flex justify-content-between align-items-center mt-3">
                         <!-- Teks di kiri -->
@@ -329,7 +398,7 @@ include '../koneksi/koneksi.php';
                             </ul>
                           </nav>
                         </div>
-                    </div>
+                      <?php } ?>
                   </div>
                 </div>
               </div>
