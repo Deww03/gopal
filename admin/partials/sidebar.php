@@ -22,10 +22,17 @@
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="bayar.php">
+            <a class="nav-link" data-bs-toggle="collapse" href="#bayar" aria-expanded="false" aria-controls="bayar">
               <i class="menu-icon mdi mdi-cash-multiple"></i>
-              <span class="menu-title">Pembayaran</span>
+              <span class="menu-title">Data Bayar</span>
+              <i class="menu-arrow"></i> 
             </a>
+            <div class="collapse" id="bayar">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="data_bayar.php">Pembayaran</a></li>
+                <li class="nav-item"> <a class="nav-link" href="riwayat_bayar.php">Riwayat Bayar</a></li>
+              </ul>
+            </div>
           </li>
           <li class="nav-item nav-category">Profil</li>
           <li class="nav-item">

@@ -5,7 +5,7 @@ include '../koneksi/koneksi.php';
 
 // Ambil data dari form
 $id_pelanggan = $_POST['id_pelanggan'];
-$jumlah = $_POST['jumlah'];
+$jumlah_utang = $_POST['jumlah_utang'];
 
 // Ambil ID admin dari session yang sudah login
 $id_admin = $_SESSION['id_admin']; // ID admin dari sesi
@@ -14,13 +14,13 @@ $jatuh_tempo = date('Y-m-d', strtotime('+60 days')); // 60 hari setelah tanggal 
 $status = 'belum_lunas'; // Status default
 
 // Cek apakah data yang diperlukan sudah diisi
-if (empty($id_pelanggan) || empty($jumlah)) {
+if (empty($id_pelanggan) || empty($jumlah_utang)) {
     die("Semua data harus diisi.");
 }
 
 // Query untuk menyimpan data utang
-mysqli_query($koneksi, "INSERT INTO utang (id_pelanggan, id_admin, tanggal, jatuh_tempo, jumlah, status) 
-                         VALUES ('$id_pelanggan', '$id_admin', '$tanggal', '$jatuh_tempo', '$jumlah', '$status')")
+mysqli_query($koneksi, "INSERT INTO utang (id_pelanggan, id_admin, tanggal, jatuh_tempo, jumlah_utang, status) 
+                         VALUES ('$id_pelanggan', '$id_admin', '$tanggal', '$jatuh_tempo', '$jumlah_utang', '$status')")
 or die(mysqli_error($koneksi));
 
 // Redirect ke halaman data utang dengan pesan sukses

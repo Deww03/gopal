@@ -101,7 +101,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
               <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="mb-0">Utang yang sudah lunas</h4>
+                        <h4 class="mb-0">Utang yang belum lunas</h4>
                     </div>
 
                     <!-- 🔍 Input Pencarian -->
@@ -120,7 +120,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                           <button type="submit" class="btn btn-inverse-info" style="padding: 0.5rem 1rem;">
                               Cari
                           </button>
-                          <a href="semua_utang.php" class="btn btn-inverse-danger" style="padding: 0.5rem 1rem;">
+                          <a href="belum_lunas.php" class="btn btn-inverse-danger" style="padding: 0.5rem 1rem;">
                               Batal Cari
                           </a>
                       <?php } else { ?>
@@ -139,7 +139,8 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                             <th>Nama Pelanggan</th>
                             <th>Nama Admin</th>
                             <th>Jatuh Tempo</th>
-                            <th>Jumlah</th>
+                            <th>Jumlah Utang</th>
+                            <th>Jumlah Bayar</th>
                             <th>Status</th>
                             <th>Aksi</th>
                           </tr>
@@ -164,23 +165,27 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                                                   pelanggan.nama_pelanggan LIKE '%$search%' OR 
                                                   admin.nama_admin LIKE '%$search%' OR
                                                   utang.tanggal LIKE '%$search%' OR
-                                                  utang.jumlah LIKE '%$search%'
+                                                  utang.jumlah_utang LIKE '%$search%'
                                               )";
                               $result_total = mysqli_query($koneksi, $query_total);
                               $row_total = mysqli_fetch_array($result_total);
                               $total_records = $row_total[0];
 
-                              $query = "SELECT utang.*, pelanggan.nama_pelanggan, admin.nama_admin 
+                              $query = "SELECT utang.*, pelanggan.nama_pelanggan, admin.nama_admin,
+                                              IFNULL(SUM(bayar.jumlah_bayar), 0) AS jumlah_bayar
                                         FROM utang
                                         LEFT JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
                                         LEFT JOIN admin ON utang.id_admin = admin.id_admin
+                                        LEFT JOIN bayar ON utang.id_utang = bayar.id_utang
                                         WHERE utang.status = 'belum_lunas' AND (
                                             pelanggan.nama_pelanggan LIKE '%$search%' OR 
                                             admin.nama_admin LIKE '%$search%' OR
                                             utang.tanggal LIKE '%$search%' OR
-                                            utang.jumlah LIKE '%$search%'
+                                            utang.jumlah_utang LIKE '%$search%'
                                         )
+                                        GROUP BY utang.id_utang
                                         ORDER BY utang.tanggal DESC";
+
                               $result = mysqli_query($koneksi, $query);
 
                               $start_range = 1;
@@ -188,20 +193,25 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
 
                           } else {
                               // Query total jika tidak ada pencarian
-                              $query_total = "SELECT COUNT(*) FROM utang WHERE status = 'belum_lunas'";
+                              $query_total = "SELECT COUNT(*) 
+                                              FROM utang 
+                                              WHERE status = 'belum_lunas'";
                               $result_total = mysqli_query($koneksi, $query_total);
                               $row_total = mysqli_fetch_array($result_total);
                               $total_records = $row_total[0];
                               $total_pages = ceil($total_records / $limit);
 
-                              $query = "SELECT utang.*, pelanggan.nama_pelanggan, admin.nama_admin 
+                              $query = "SELECT utang.*, pelanggan.nama_pelanggan, admin.nama_admin,
+                                        IFNULL(SUM(bayar.jumlah_bayar), 0) AS jumlah_bayar
                                         FROM utang
                                         LEFT JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
                                         LEFT JOIN admin ON utang.id_admin = admin.id_admin
+                                        LEFT JOIN bayar ON utang.id_utang = bayar.id_utang
                                         WHERE utang.status = 'belum_lunas'
+                                        GROUP BY utang.id_utang
                                         ORDER BY utang.tanggal DESC
                                         LIMIT $start, $limit";
-                              $result = mysqli_query($koneksi, $query);
+                                        $result = mysqli_query($koneksi, $query);
 
                               $start_range = $start + 1;
                               $end_range = min($start + $limit, $total_records);
@@ -209,21 +219,35 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
 
                           // Tampilkan data
                           while ($row = mysqli_fetch_assoc($result)) {
-                            $status_label = $row['status'] == 'sudah_lunas' 
-                                            ? '<label class="badge badge-success">Lunas</label>' 
-                                            : '<label class="badge badge-danger">Belum Lunas</label>';
-
+                            $jumlah_bayar = $row['jumlah_bayar']; // Sudah dari tabel bayar
+                            $sisa_utang = $row['jumlah_utang'] - $jumlah_bayar;
+                        
                             echo "<tr>";
                             echo "<td>" . htmlspecialchars($row['tanggal']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['nama_pelanggan']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['nama_admin']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['jatuh_tempo']) . "</td>";
-                            echo "<td>Rp " . number_format($row['jumlah'], 0, ',', '.') . "</td>";
-                            echo "<td>" . $status_label . "</td>";
-                            echo "<td>";
-                            echo '<a href="#" class="btn btn-inverse-info" data-bs-toggle="modal" data-bs-target="#editRowModal' . $row['id_utang'] . '">Bayar</a>';
+                            echo "<td>Rp " . number_format($row['jumlah_utang'], 0, ',', '.') . "</td>";
+                            echo "<td>Rp " . number_format($jumlah_bayar, 0, ',', '.') . "</td>";
+                            
+                            $status_label = $row['status'] == 'sudah_lunas'
+                                            ? '<label class="badge badge-success">Lunas</label>'
+                                            : '<label class="badge badge-danger">Belum Lunas</label>';
+                            echo "<td>$status_label</td>";
+                            echo "<td>
+                                    <div class='dropdown'>
+                                      <button class='btn btn-sm btn-inverse-info dropdown-toggle' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
+                                        Aksi
+                                      </button>
+                                      <ul class='dropdown-menu'>
+                                        <li><a class='dropdown-item' href='#' data-bs-toggle='modal' data-bs-target='#editRowModal{$row['id_utang']}'>Bayar</a></li>
+                                        <li><a class='dropdown-item' href='riwayat_bayar.php?id_pelanggan={$row['id_pelanggan']}&id_utang={$row['id_utang']}'>Riwayat</a></li>
+                                      </ul>
+                                    </div>
+                                  </td>";
                             echo "</tr>";
-                          }
+                        }
+                        
                           ?>
 
                         </tbody>
@@ -236,8 +260,10 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                           $id = $row['id_utang'];
                           $tanggal = $row['tanggal'];
                           $nama_pelanggan = $row['nama_pelanggan'];
-                          $jumlah = $row['jumlah'];
+                          $jumlah_utang = $row['jumlah_utang'];
                           $status = $row['status'];
+                          $total_bayar = $row['jumlah_bayar'];
+                          $sisa_utang = $jumlah_utang - $total_bayar;
                         ?>
 
                         <!-- Modal Bayar Utang -->
@@ -264,7 +290,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
 
                                   <div class="form-group form-group-default mb-2">
                                     <label>Total Utang</label>
-                                    <input type="text" class="form-control" value="Rp <?php echo number_format($jumlah, 0, ',', '.'); ?>" readonly>
+                                    <input type="text" class="form-control" value="Rp <?php echo number_format($jumlah_utang, 0, ',', '.'); ?>" readonly>
                                   </div>
 
                                   <?php if ($status == 'sudah_lunas'): ?>
@@ -274,7 +300,11 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                                   <?php else: ?>
                                     <div class="form-group form-group-default mb-2">
                                       <label>Jumlah Bayar</label>
-                                      <input type="number" name="jumlah_bayar" class="form-control" placeholder="Masukkan jumlah yang dibayar" min="1" max="<?php echo $jumlah; ?>" required>
+                                      <input type="number" name="jumlah_bayar"
+                                        max="<?php echo $row['jumlah_utang'] - $row['jumlah_bayar']; ?>"
+                                        class="form-control"
+                                        placeholder="Masukkan jumlah yang dibayar"
+                                        required>
                                     </div>
                                   <?php endif; ?>
                                 </div>
