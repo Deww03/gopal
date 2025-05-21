@@ -2,6 +2,8 @@
 <html>
 <head>
 	<title>Login - Gopal</title>
+    <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" type="text/css" href="style.css">
@@ -64,6 +66,37 @@
       </div>
     </div>
   </div>
+
+  <!-- Toast untuk Login Gagal -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+  <div id="loginToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header bg-danger text-white">
+      <strong class="me-auto">Login Gagal</strong>
+      <small>Baru saja</small>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      Nama atau password yang kamu masukkan salah.
+    </div>
+  </div>
+</div>
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const alert = urlParams.get('alert');
+    if (alert === 'gagal') {
+      const toastEl = document.getElementById('loginToast');
+      const toast = new bootstrap.Toast(toastEl);
+      toast.show();
+    }
+  });
+</script>
+
+
 <script type="text/javascript" src="script.js"></script>
+<!-- Bootstrap 5 Bundle JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

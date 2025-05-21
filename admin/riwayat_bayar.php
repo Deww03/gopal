@@ -137,7 +137,7 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT * FROM pelanggan");
 
                             <!-- Tombol Bersihkan -->
                             <a href="riwayat_bayar.php" class="btn btn-inverse-warning" style="padding: 0.7rem;">
-                                Bersihkan
+                                Refresh
                             </a>
                         <?php endif; ?>
 

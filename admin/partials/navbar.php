@@ -46,7 +46,7 @@
             <a class="dropdown-item py-3">
                 <p class="mb-0 font-weight-medium float-left">Notifikasi</p>
               </a>
-              <ul class="dropdown-menu-list mb-0 px-2 py-2" id="notifDropdown" style="list-style: none;">
+              <ul class="dropdown-menu-list mb-0 px-2 py-2" id="notifDropdown" style="list-style: none; max-height: 250px; overflow-y: auto;">
                 <?php if (!empty($_SESSION['notifikasi'])): ?>
                   <?php foreach (array_reverse($_SESSION['notifikasi']) as $n): ?>
                     <li class="py-2 border-bottom">

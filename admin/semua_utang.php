@@ -58,6 +58,9 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
   } elseif ($status === 'gagal_jumlah_berlebih') {
       $pesan = 'Utang gagal dibayar karna jumlah berlebih!';
       $warna = 'inverse-warning';
+  } elseif ($status === 'gagal_utang_lama') {
+      $pesan = 'Utang gagal ditambahkan karna pelanggan memiliki tunggakan!';
+      $warna = 'inverse-danger';
   } elseif ($status === 'error') {
       $pesan = 'Terjadi kesalahan!';
       $warna = 'inverse-danger';
@@ -210,11 +213,12 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                         <thead>
                           <tr>
                             <th>Tanggal</th>
-                            <th>Nama Pelanggan</th>
-                            <th>Nama Admin</th>
+                            <th>Pelanggan</th>
+                            <th>Admin</th>
                             <th>Jatuh Tempo</th>
                             <th>Jumlah Utang</th>
                             <th>Jumlah Bayar</th>
+                            <th>Sisa Utang</th>
                             <th>Status</th>
                             <th>Aksi</th>
                           </tr>
@@ -258,7 +262,9 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                                             utang.tanggal LIKE '%$search%' OR
                                             utang.jumlah_utang LIKE '$search'
                                         GROUP BY utang.id_utang
-                                        ORDER BY utang.tanggal DESC";
+                                        ORDER BY utang.id_utang DESC
+                                        LIMIT $start, $limit  
+                                        ";
                               $result = mysqli_query($koneksi, $query);
 
                               $start_range = 1;
@@ -279,7 +285,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                                         LEFT JOIN admin ON utang.id_admin = admin.id_admin
                                         LEFT JOIN bayar ON utang.id_utang = bayar.id_utang
                                         GROUP BY utang.id_utang
-                                        ORDER BY utang.tanggal DESC
+                                        ORDER BY utang.id_utang DESC
                                         LIMIT $start, $limit
                                         ";
                                         $result = mysqli_query($koneksi, $query);
@@ -300,6 +306,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                             echo "<td>" . htmlspecialchars($row['jatuh_tempo']) . "</td>";
                             echo "<td>Rp " . number_format($row['jumlah_utang'], 0, ',', '.') . "</td>";
                             echo "<td>Rp " . number_format($jumlah_bayar, 0, ',', '.') . "</td>";
+                            echo "<td>Rp " . number_format($sisa_utang, 0, ',', '.') . "</td>";
                             
                             $status_label = $row['status'] == 'sudah_lunas'
                                             ? '<label class="badge badge-success">Lunas</label>'
@@ -307,7 +314,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                             echo "<td>$status_label</td>";
                             echo "<td>
                                     <div class='dropdown'>
-                                      <button class='btn btn-sm btn-inverse-info dropdown-toggle' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
+                                      <button class='btn btn-sm btn-inverse-warning dropdown-toggle' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
                                         Aksi
                                       </button>
                                       <ul class='dropdown-menu'>

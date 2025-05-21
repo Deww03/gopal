@@ -3,10 +3,8 @@ include '../cek_login.php';
 include '../koneksi/koneksi.php';
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
@@ -773,6 +771,46 @@ include '../koneksi/koneksi.php';
     <!-- page-body-wrapper ends -->
   </div>
   <!-- container-scroller -->
+
+  <!-- Toast Container -->
+<div id="toastContainer" class="position-fixed bottom-0 end-0 p-3 d-flex flex-column-reverse gap-2" style="z-index: 1055;">
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    <?php if (!empty($_SESSION['toasts'])): ?>
+      const toastData = <?= json_encode($_SESSION['toasts']) ?>;
+      const container = document.getElementById('toastContainer');
+
+      toastData.forEach(t => {
+        const wrapper = document.createElement('div');
+        wrapper.className = `toast text-white ${t.warna} border-0`; // warna dari PHP (misal 'bg-warning')
+        wrapper.setAttribute('role', 'alert');
+        wrapper.setAttribute('aria-live', 'assertive');
+        wrapper.setAttribute('aria-atomic', 'true');
+
+        wrapper.innerHTML = `
+          <div class="toast-header">
+            <i class="mdi mdi-bell-ring me-2"></i>
+            <strong class="me-auto">Data</strong>
+            <small>Baru saja</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            ${t.pesan}
+          </div>
+        `;
+
+        container.appendChild(wrapper);
+        new bootstrap.Toast(wrapper).show();
+      });
+
+      <?php unset($_SESSION['toasts']); ?>
+    <?php endif; ?>
+  });
+</script>
+
+
 
   <!-- plugins:js -->
   <script src="../vendors/js/vendor.bundle.base.js"></script>

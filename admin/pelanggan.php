@@ -34,7 +34,6 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
 </head>
 <body>
   <?php
-
   $status = $_GET['status'] ?? null;
   $pesan = '';
   $warna = 'primary'; // default warna toast
@@ -50,6 +49,9 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
       $warna = 'inverse-warning';
   } elseif ($status === 'error') {
       $pesan = 'Terjadi kesalahan!';
+      $warna = 'inverse-danger';
+  } elseif ($status === 'nama_sudah_ada') {
+      $pesan = 'Nama pelanggan sudah digunakan. Gunakan nama lain.';
       $warna = 'inverse-danger';
   }
 
@@ -227,7 +229,7 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                               $total_records = $row_total[0];
                           
                               // Ambil semua data hasil pencarian tanpa limit
-                              $query = "SELECT * FROM pelanggan WHERE nama_pelanggan LIKE '%$search%' OR no_hp_pelanggan LIKE '%$search%'";
+                              $query = "SELECT * FROM pelanggan WHERE nama_pelanggan LIKE '%$search%' OR no_hp_pelanggan LIKE '%$search%' ORDER BY id_pelanggan DESC";
                               $result = mysqli_query($koneksi, $query);
                           
                               // Untuk menampilkan "Menampilkan x sampai y"
@@ -244,7 +246,7 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                               $total_pages = ceil($total_records / $limit);
                           
                               // Ambil data terbatas dengan limit
-                              $query = "SELECT * FROM pelanggan LIMIT $start, $limit";
+                              $query = "SELECT * FROM pelanggan ORDER BY id_pelanggan DESC LIMIT $start, $limit";
                               $result = mysqli_query($koneksi, $query);
                           
                               // Hitung range tampil
@@ -412,7 +414,7 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
             <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
                     <i class="mdi mdi-bell-ring me-2"></i>
-                    <strong class="me-auto">Data Pelanggan</strong>
+                    <strong class="me-auto">Data</strong>
                     <small>Baru saja</small>
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
