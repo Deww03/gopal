@@ -63,6 +63,34 @@ if ($cek > 0) {
 		];
 	}
 
+	// Cek utang yang sudah lewat jatuh tempo tetapi belum lunas
+	$query_utang_terlambat = mysqli_query($koneksi, "
+	SELECT utang.*, pelanggan.nama_pelanggan 
+	FROM utang 
+	JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
+	WHERE utang.jatuh_tempo < '$hari_ini'
+	AND utang.status = 'belum_lunas'
+	AND utang.id_admin = " . $_SESSION['id_admin']);
+
+	$jumlah_utang_terlambat = 0;
+
+	while ($utang_terlambat = mysqli_fetch_assoc($query_utang_terlambat)) {
+	$jumlah_utang_terlambat++;
+	$tanggal_jatuh_tempo = date('d M Y', strtotime($utang_terlambat['jatuh_tempo']));
+	$_SESSION['notifikasi'][] = [
+		'pesan' => "Utang atas nama " . $utang_terlambat['nama_pelanggan'] . " sudah jatuh tempo sejak $tanggal_jatuh_tempo dan belum dilunasi!",
+		'waktu' => date('H:i'),
+		'warna' => 'danger'
+	];
+	}
+
+	if ($jumlah_utang_terlambat > 0) {
+	$_SESSION['toasts'][] = [
+		'pesan' => "Ada $jumlah_utang_terlambat utang yang sudah lewat jatuh temponya dan belum lunas!",
+		'warna' => 'bg-inverse-danger'
+	];
+	}
+
 	header("location:admin/dashboard.php");
 } else {
 	header("location:index.php?alert=gagal");

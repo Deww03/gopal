@@ -203,19 +203,25 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT * FROM pelanggan");
                             </tbody>
                             <?php if ($total_bayar > 0) : ?>
                                 <tfoot>
-                                <tr>
-                                    <th colspan="2" class="text-end">Total Pembayaran</th>
-                                    <th>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span>Rp <?= number_format($total_bayar, 0, ',', '.'); ?></span>
-                                            <?php
-                                            $status = ($total_bayar >= $jumlah_utang) ? 'Lunas' : 'Belum Lunas';
-                                            $label_class = ($status === 'Lunas') ? 'badge badge-success' : 'badge badge-danger';
-                                            ?>
-                                            <span class="label <?= $label_class; ?>"><?= $status; ?></span>                                            
-                                        </div>
-                                    </th>
-                                </tr>
+                                    <tr>
+                                        <th colspan="2" class="text-end">Total Pembayaran</th>
+                                        <th>
+                                            Rp <?= number_format($total_bayar, 0, ',', '.'); ?>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2" class="text-end">Sisa Utang</th>
+                                        <th>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Rp <?= number_format(max($jumlah_utang - $total_bayar, 0), 0, ',', '.'); ?></span>
+                                                <?php
+                                                $status = ($total_bayar >= $jumlah_utang) ? 'Lunas' : 'Belum Lunas';
+                                                $label_class = ($status === 'Lunas') ? 'badge badge-success' : 'badge badge-danger';
+                                                ?>
+                                                <span class="label <?= $label_class; ?>"><?= $status; ?></span>
+                                            </div>
+                                        </th>
+                                    </tr>
                                 </tfoot>
                             <?php endif; ?>
                         </table>

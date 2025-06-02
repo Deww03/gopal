@@ -194,6 +194,7 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT * FROM pelanggan");
                                         <th>Jatuh Tempo</th>
                                         <th>Jumlah Utang</th>
                                         <th>Jumlah Bayar</th>
+                                        <th>Sisa Utang</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -201,43 +202,42 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT * FROM pelanggan");
                                     <?php
                                     // Query untuk filter berdasarkan bulan, tahun, dan status
                                     $query = "SELECT utang.*, pelanggan.nama_pelanggan, admin.nama_admin,
-              IFNULL(SUM(bayar.jumlah_bayar), 0) AS jumlah_bayar
-          FROM utang
-          LEFT JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
-          LEFT JOIN admin ON utang.id_admin = admin.id_admin
-          LEFT JOIN bayar ON utang.id_utang = bayar.id_utang
-          WHERE 1";
+                                        IFNULL(SUM(bayar.jumlah_bayar), 0) AS jumlah_bayar
+                                    FROM utang
+                                    LEFT JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
+                                    LEFT JOIN admin ON utang.id_admin = admin.id_admin
+                                    LEFT JOIN bayar ON utang.id_utang = bayar.id_utang
+                                    WHERE 1";
 
-if (!empty($bulan)) {
-    $query .= " AND MONTH(utang.tanggal) = '$bulan'";
-}
+                            if (!empty($bulan)) {
+                                $query .= " AND MONTH(utang.tanggal) = '$bulan'";
+                            }
 
-if (!empty($tahun)) {
-    $query .= " AND YEAR(utang.tanggal) = '$tahun'";
-}
+                            if (!empty($tahun)) {
+                                $query .= " AND YEAR(utang.tanggal) = '$tahun'";
+                            }
 
-// Periksa apakah status adalah "semua", jika iya maka abaikan filter status
-if ($status !== 'semua' && !empty($status)) {
-    $status_condition = ($status == 'lunas') ? " AND utang.status = 'sudah_lunas'" : " AND utang.status = 'belum_lunas'";
-    $query .= $status_condition;
-}
+                            // Periksa apakah status adalah "semua", jika iya maka abaikan filter status
+                            if ($status !== 'semua' && !empty($status)) {
+                                $status_condition = ($status == 'lunas') ? " AND utang.status = 'sudah_lunas'" : " AND utang.status = 'belum_lunas'";
+                                $query .= $status_condition;
+                            }
 
-$query .= " GROUP BY utang.id_utang ORDER BY utang.id_utang DESC";
+                            $query .= " GROUP BY utang.id_utang ORDER BY utang.id_utang DESC";
 
-// Eksekusi query
-$result = mysqli_query($koneksi, $query);
-
+                            // Eksekusi query
+                            $result = mysqli_query($koneksi, $query);
 
                                     // Menampilkan data
                                     while ($row = mysqli_fetch_assoc($result)) {
                                         $jumlah_bayar = $row['jumlah_bayar']; // Sudah dari tabel bayar
                                         $sisa_utang = $row['jumlah_utang'] - $jumlah_bayar;
-
+                                    
                                         // Status pembayaran
                                         $status_label = ($sisa_utang <= 0)
                                             ? '<label class="badge badge-success">Lunas</label>'
                                             : '<label class="badge badge-danger">Belum Lunas</label>';
-
+                                    
                                         echo "<tr>";
                                         echo "<td>" . htmlspecialchars($row['tanggal']) . "</td>";
                                         echo "<td>" . htmlspecialchars($row['nama_pelanggan']) . "</td>";
@@ -245,6 +245,7 @@ $result = mysqli_query($koneksi, $query);
                                         echo "<td>" . htmlspecialchars($row['jatuh_tempo']) . "</td>";
                                         echo "<td>Rp " . number_format($row['jumlah_utang'], 0, ',', '.') . "</td>";
                                         echo "<td>Rp " . number_format($jumlah_bayar, 0, ',', '.') . "</td>";
+                                        echo "<td>Rp " . number_format(max($sisa_utang, 0), 0, ',', '.') . "</td>"; // Kolom Sisa Bayar
                                         echo "<td>$status_label</td>";
                                         echo "</tr>";
                                     }

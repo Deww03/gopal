@@ -80,7 +80,7 @@ $total_bayar = 0;
             <th>Jatuh Tempo</th>
             <th>Jumlah Utang</th>
             <th>Jumlah Bayar</th>
-            <th>Sisa</th>
+            <th>Sisa Utang</th>
             <th>Status</th>
         </tr>
     </thead>

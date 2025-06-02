@@ -177,7 +177,17 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                                     title="Nomor HP hanya boleh berisi angka (10-13 digit)"
                                     />
                                 </div>
-                                </div>                            
+                                </div>     
+                                <div class="form-group form-group-default">
+                                <label>Alamat</label>
+                                <textarea
+                                  class="form-control"
+                                  placeholder="Isikan alamat pelanggan"
+                                  required="required"
+                                  name="alamat_pelanggan"
+                                  rows="3"
+                                ></textarea>
+                              </div>                       
                               </div>
                             </div>
                             <div class="modal-footer border-0">
@@ -209,7 +219,8 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                         <tr>
                           <th>Nama</th>
                           <th>No. HP</th>
-                          <th style="width: 21%;">Tindakan</th>
+                          <th>Alamat</th>
+                          <th>Aksi</th>
                         </tr>
                       </thead>
                       <tbody id="pelangganTable">
@@ -262,6 +273,7 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                             echo "<tr>";
                             echo "<td>$name</td>";
                             echo "<td>$no_hp</td>";
+                            echo "<td>" . htmlspecialchars($row['alamat_pelanggan']) . "</td>";
                             echo "<td>";
                             echo "<div class='form-button-action'>";
                             echo "<button type='button' class='btn btn-inverse-success me-2' data-bs-toggle='modal' data-bs-target='#editRowModal$id'>";
@@ -325,6 +337,10 @@ $search = isset($_GET['search']) ? $_GET['search'] : '';
                               <div class="form-group form-group-default">
                                 <label>No HP</label>
                                 <input type="text" name="no_hp_pelanggan" class="form-control" value="<?php echo $no_hp; ?>">
+                              </div>
+                              <div class="form-group form-group-default">
+                                <label>Alamat</label>
+                                <textarea name="alamat_pelanggan" class="form-control" rows="3"><?php echo htmlspecialchars($row['alamat_pelanggan']); ?></textarea>
                               </div>
                             </div>
                             <div class="modal-footer">

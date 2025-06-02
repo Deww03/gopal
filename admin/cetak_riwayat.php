@@ -90,6 +90,10 @@ $total_bayar = 0;
                 <th>Rp <?= number_format($total_bayar, 0, ',', '.'); ?></th>
             </tr>
             <tr>
+                <th colspan="2">Sisa Utang</th>
+                <th>Rp <?= number_format(max($jumlah_utang - $total_bayar, 0), 0, ',', '.'); ?></th>
+            </tr>
+            <tr>
                 <th colspan="2">Status</th>
                 <th>
                     <?php
