@@ -12,8 +12,8 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT id_pelanggan, nama_pelanggan 
 $today = date('Y-m-d');
 $due_date = date('Y-m-d', strtotime('+60 days'));
 
-// Nama admin dari session
-$nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin';
+// Nama kasir dari session
+$nama_kasir = isset($_SESSION['nama_kasir']) ? $_SESSION['nama_kasir'] : 'kasir';
 ?>
 
 <!DOCTYPE html>
@@ -24,7 +24,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Data Utang - Gopal</title>
+  <title>Data Bayar - Bude Ari</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="../vendors/feather/feather.css">
   <link rel="stylesheet" href="../vendors/mdi/css/materialdesignicons.min.css">
@@ -137,7 +137,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                         <tr>
                             <th>Tanggal Bayar</th>
                             <th>Nama Pelanggan</th>
-                            <th>Nama Admin</th>
+                            <th>Nama Kasir</th>
                             <th>Jumlah Bayar</th>
                         </tr>
                         </thead>
@@ -155,9 +155,9 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                                             FROM bayar 
                                             LEFT JOIN utang ON bayar.id_utang = utang.id_utang
                                             LEFT JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
-                                            LEFT JOIN admin ON bayar.id_admin = admin.id_admin
+                                            LEFT JOIN kasir ON bayar.id_kasir = kasir.id_kasir
                                             WHERE pelanggan.nama_pelanggan LIKE '%$search%' 
-                                                OR admin.nama_admin LIKE '%$search%' 
+                                                OR kasir.nama_kasir LIKE '%$search%' 
                                                 OR bayar.tanggal_bayar LIKE '%$search%' 
                                                 OR bayar.jumlah_bayar LIKE '%$search%'";
 
@@ -165,13 +165,13 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                             $row_total = mysqli_fetch_array($result_total);
                             $total_records = $row_total[0];
 
-                            $query = "SELECT bayar.*, pelanggan.nama_pelanggan, admin.nama_admin
+                            $query = "SELECT bayar.*, pelanggan.nama_pelanggan, kasir.nama_kasir
                                         FROM bayar
                                         LEFT JOIN utang ON bayar.id_utang = utang.id_utang
                                         LEFT JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
-                                        LEFT JOIN admin ON bayar.id_admin = admin.id_admin
+                                        LEFT JOIN kasir ON bayar.id_kasir = kasir.id_kasir
                                         WHERE pelanggan.nama_pelanggan LIKE '%$search%' 
-                                        OR admin.nama_admin LIKE '%$search%' 
+                                        OR kasir.nama_kasir LIKE '%$search%' 
                                         OR bayar.tanggal_bayar LIKE '%$search%' 
                                         OR bayar.jumlah_bayar LIKE '%$search%'
                                         ORDER BY bayar.tanggal_bayar DESC";
@@ -187,13 +187,13 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                             $end_range = min($start + $limit, $total_records);
 
                             // Query data hasil pencarian
-                            $query = "SELECT bayar.*, pelanggan.nama_pelanggan, admin.nama_admin
+                            $query = "SELECT bayar.*, pelanggan.nama_pelanggan, kasir.nama_kasir
                                     FROM bayar
                                     LEFT JOIN utang ON bayar.id_utang = utang.id_utang
                                     LEFT JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
-                                    LEFT JOIN admin ON bayar.id_admin = admin.id_admin
+                                    LEFT JOIN kasir ON bayar.id_kasir = kasir.id_kasir
                                     WHERE pelanggan.nama_pelanggan LIKE '%$search%' 
-                                        OR admin.nama_admin LIKE '%$search%' 
+                                        OR kasir.nama_kasir LIKE '%$search%' 
                                         OR bayar.tanggal_bayar LIKE '%$search%' 
                                         OR bayar.jumlah_bayar LIKE '%$search%'
                                     ORDER BY bayar.tanggal_bayar DESC
@@ -206,7 +206,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                             echo "<tr>";
                             echo "<td>" . htmlspecialchars($row['tanggal_bayar']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['nama_pelanggan']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['nama_admin']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['nama_kasir']) . "</td>";
                             echo "<td>Rp " . number_format($row['jumlah_bayar'], 0, ',', '.') . "</td>";
                             echo "</tr>";
                             }

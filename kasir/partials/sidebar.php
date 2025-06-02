@@ -44,7 +44,7 @@
             <div class="collapse" id="form-elements">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"><a class="nav-link" href="pelanggan.php">Pelanggan</a></li>
-                <li class="nav-item"><a class="nav-link" href="profil_admin.php">Admin</a></li>
+                <li class="nav-item"><a class="nav-link" href="profil_kasir.php">Kasir</a></li>
               </ul>
             </div>
           </li>

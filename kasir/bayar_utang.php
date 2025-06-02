@@ -2,10 +2,10 @@
 include '../koneksi/koneksi.php';
 include '../cek_login.php';
 
-$id_admin = $_SESSION['id_admin'];
+$id_kasir = $_SESSION['id_kasir'];
 $id_utang = $_POST['id_utang'];
 $jumlah_bayar = $_POST['jumlah_bayar'];
-$id_admin = $_SESSION['id_admin']; // Ambil dari sesi
+$id_kasir = $_SESSION['id_kasir']; // Ambil dari sesi
 $tanggal_bayar = date('Y-m-d');
 
 // Ambil data utang
@@ -26,8 +26,8 @@ if ($jumlah_bayar > $sisa_utang) {
 }
 
 // Simpan ke tabel bayar
-mysqli_query($koneksi, "INSERT INTO bayar (id_utang, id_admin, tanggal_bayar, jumlah_bayar)
-VALUES ('$id_utang', '$id_admin', '$tanggal_bayar', '$jumlah_bayar')") or die(mysqli_error($koneksi));
+mysqli_query($koneksi, "INSERT INTO bayar (id_utang, id_kasir, tanggal_bayar, jumlah_bayar)
+VALUES ('$id_utang', '$id_kasir', '$tanggal_bayar', '$jumlah_bayar')") or die(mysqli_error($koneksi));
 
 // Hitung ulang total bayar
 $query_total2 = mysqli_query($koneksi, "SELECT IFNULL(SUM(jumlah_bayar), 0) as total_bayar FROM bayar WHERE id_utang = '$id_utang'");

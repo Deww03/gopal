@@ -3,25 +3,25 @@
 include 'koneksi/koneksi.php';
 
 // menangkap data yang dikirim dari form
-$nama_admin = mysqli_real_escape_string($koneksi, $_POST['nama_admin']);
-$password_admin = mysqli_real_escape_string($koneksi, md5($_POST['password_admin']));
+$nama_kasir = mysqli_real_escape_string($koneksi, $_POST['nama_kasir']);
+$password_kasir = mysqli_real_escape_string($koneksi, md5($_POST['password_kasir']));
 
-$login = mysqli_query($koneksi, "SELECT * FROM admin WHERE nama_admin='$nama_admin' AND password_admin='$password_admin'");
+$login = mysqli_query($koneksi, "SELECT * FROM kasir WHERE nama_kasir='$nama_kasir' AND password_kasir='$password_kasir'");
 $cek = mysqli_num_rows($login);
 
 if ($cek > 0) {
 	session_start();
 	$data = mysqli_fetch_assoc($login);
-	$_SESSION['id_admin'] = $data['id_admin'];
-	$_SESSION['nama_admin'] = $data['nama_admin'];
-	$_SESSION['password_admin'] = $data['password_admin'];
-	$_SESSION['no_hp_admin'] = $data['no_hp_admin'];
+	$_SESSION['id_kasir'] = $data['id_kasir'];
+	$_SESSION['nama_kasir'] = $data['nama_kasir'];
+	$_SESSION['password_kasir'] = $data['password_kasir'];
+	$_SESSION['no_hp_kasir'] = $data['no_hp_kasir'];
 	$_SESSION['jenis_kelamin'] = $data['jenis_kelamin'];
-	$_SESSION['foto_admin'] = $data['foto_admin'];
+	$_SESSION['foto_kasir'] = $data['foto_kasir'];
 	$_SESSION['status'] = "login";
 	$_SESSION['login_success'] = true;
 	$_SESSION['notifikasi'][] = [
-        'pesan' => 'Login berhasil. Selamat datang, ' . $_SESSION['nama_admin'] . '!',
+        'pesan' => 'Login berhasil. Selamat datang, ' . $_SESSION['nama_kasir'] . '!',
         'waktu' => date('H:i'),
         'warna' => 'success'
     ];
@@ -37,7 +37,7 @@ if ($cek > 0) {
 		JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
 		WHERE utang.jatuh_tempo BETWEEN '$hari_ini' AND '$tiga_hari_ke_depan' 
 		AND utang.status = 'belum_lunas'
-		AND utang.id_admin = " . $_SESSION['id_admin']);
+		AND utang.id_kasir = " . $_SESSION['id_kasir']);
 
 	$jumlah_utang_jatuh_tempo = 0;
 
@@ -52,7 +52,7 @@ if ($cek > 0) {
 	}
 
 	$_SESSION['toasts'][] = [
-	'pesan' => 'Login berhasil. Selamat datang, ' . $_SESSION['nama_admin'] . '!',
+	'pesan' => 'Login berhasil. Selamat datang, ' . $_SESSION['nama_kasir'] . '!',
 	'warna' => 'bg-inverse-success'
 	];
 
@@ -70,7 +70,7 @@ if ($cek > 0) {
 	JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
 	WHERE utang.jatuh_tempo < '$hari_ini'
 	AND utang.status = 'belum_lunas'
-	AND utang.id_admin = " . $_SESSION['id_admin']);
+	AND utang.id_kasir = " . $_SESSION['id_kasir']);
 
 	$jumlah_utang_terlambat = 0;
 
@@ -91,7 +91,7 @@ if ($cek > 0) {
 	];
 	}
 
-	header("location:admin/dashboard.php");
+	header("location:kasir/dashboard.php");
 } else {
 	header("location:index.php?alert=gagal");
 }

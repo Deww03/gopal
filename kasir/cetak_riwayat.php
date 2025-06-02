@@ -19,9 +19,9 @@ $utang = mysqli_fetch_assoc($utang_query);
 $jumlah_utang = $utang['jumlah_utang'];
 
 // Ambil riwayat bayar
-$query = "SELECT bayar.*, admin.nama_admin 
+$query = "SELECT bayar.*, kasir.nama_kasir 
           FROM bayar 
-          LEFT JOIN admin ON bayar.id_admin = admin.id_admin 
+          LEFT JOIN kasir ON bayar.id_kasir = kasir.id_kasir 
           WHERE bayar.id_utang = '$id_utang'
           ORDER BY bayar.tanggal_bayar ASC";
 $result = mysqli_query($koneksi, $query);
@@ -65,7 +65,7 @@ $total_bayar = 0;
     <thead>
         <tr>
             <th>Tanggal Bayar</th>
-            <th>Nama Admin</th>
+            <th>Nama kasir</th>
             <th>Jumlah Bayar</th>
         </tr>
     </thead>
@@ -75,7 +75,7 @@ $total_bayar = 0;
                 <?php $total_bayar += $row['jumlah_bayar']; ?>
                 <tr>
                     <td><?= htmlspecialchars($row['tanggal_bayar']); ?></td>
-                    <td><?= htmlspecialchars($row['nama_admin']); ?></td>
+                    <td><?= htmlspecialchars($row['nama_kasir']); ?></td>
                     <td>Rp <?= number_format($row['jumlah_bayar'], 0, ',', '.'); ?></td>
                 </tr>
             <?php endwhile; ?>

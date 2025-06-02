@@ -12,8 +12,8 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT id_pelanggan, nama_pelanggan 
 $today = date('Y-m-d');
 $due_date = date('Y-m-d', strtotime('+60 days'));
 
-// Nama admin dari session
-$nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin';
+// Nama kasir dari session
+$nama_kasir = isset($_SESSION['nama_kasir']) ? $_SESSION['nama_kasir'] : 'kasir';
 
 $id_pelanggan = isset($_GET['id_pelanggan']) ? $_GET['id_pelanggan'] : '';
 $id_utang     = isset($_GET['id_utang']) ? $_GET['id_utang'] : '';
@@ -30,7 +30,7 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT * FROM pelanggan");
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Data Utang - Gopal</title>
+  <title>Laporan - Bude Ari</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="../vendors/feather/feather.css">
   <link rel="stylesheet" href="../vendors/mdi/css/materialdesignicons.min.css">
@@ -190,7 +190,7 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT * FROM pelanggan");
                                     <tr>
                                         <th>Tanggal</th>
                                         <th>Nama Pelanggan</th>
-                                        <th>Nama Admin</th>
+                                        <th>Nama Kasir</th>
                                         <th>Jatuh Tempo</th>
                                         <th>Jumlah Utang</th>
                                         <th>Jumlah Bayar</th>
@@ -201,11 +201,11 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT * FROM pelanggan");
                                 <tbody>
                                     <?php
                                     // Query untuk filter berdasarkan bulan, tahun, dan status
-                                    $query = "SELECT utang.*, pelanggan.nama_pelanggan, admin.nama_admin,
+                                    $query = "SELECT utang.*, pelanggan.nama_pelanggan, kasir.nama_kasir,
                                         IFNULL(SUM(bayar.jumlah_bayar), 0) AS jumlah_bayar
                                     FROM utang
                                     LEFT JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
-                                    LEFT JOIN admin ON utang.id_admin = admin.id_admin
+                                    LEFT JOIN kasir ON utang.id_kasir = kasir.id_kasir
                                     LEFT JOIN bayar ON utang.id_utang = bayar.id_utang
                                     WHERE 1";
 
@@ -241,7 +241,7 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT * FROM pelanggan");
                                         echo "<tr>";
                                         echo "<td>" . htmlspecialchars($row['tanggal']) . "</td>";
                                         echo "<td>" . htmlspecialchars($row['nama_pelanggan']) . "</td>";
-                                        echo "<td>" . htmlspecialchars($row['nama_admin']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($row['nama_kasir']) . "</td>";
                                         echo "<td>" . htmlspecialchars($row['jatuh_tempo']) . "</td>";
                                         echo "<td>Rp " . number_format($row['jumlah_utang'], 0, ',', '.') . "</td>";
                                         echo "<td>Rp " . number_format($jumlah_bayar, 0, ',', '.') . "</td>";

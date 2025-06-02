@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Login - Gopal</title>
+	<title>Login - Bude Ari</title>
     <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 	<meta charset="UTF-8">
@@ -11,19 +11,19 @@
 </head>
 <body>
   <div class="cont">
-  <form id="formAuthentication" action="login_admin.php" class="mb-3" method="post">
+  <form id="login_kasir" action="login_kasir.php" class="mb-3" method="post">
     <div class="form sign-in">
       <br>
-      <h2>Login Admin</h2>
+      <h2>Login Kasir</h2>
       <br>
       <br>
       <label>
         <span>Nama</span>
-        <input type="text" name="nama_admin" required>
+        <input type="text" name="nama_kasir" required>
       </label>
       <label>
         <span>Password</span>
-        <input type="password" name="password_admin" required>
+        <input type="password" name="password_kasir" required>
       </label>
       <br>
       <button class="submit" type="submit">Masuk</button>
@@ -39,15 +39,16 @@
         </div>
         <div class="img-text m-in">
           <br>
-          <h1>Admin?</h1>
+          <h1>Kasir?</h1>
           <p>Tekan tombol dibawah ini</p>
         </div>
         <br>
         <div class="img-btn">
           <span class="m-up">Pemilik</span>
-          <span class="m-in">Admin</span>
+          <span class="m-in">Kasir</span>
         </div>
       </div>
+    <form id="login_pemilik" action="login_pemilik.php" class="mb-3" method="post">      
       <div class="form sign-up">
         <br>
         <h2>Login Pemilik</h2>
@@ -55,15 +56,16 @@
         <br>
         <label>
           <span>Nama</span>
-          <input type="text">
+          <input type="text" name="nama_pemilik" required>
         </label>
         <label>
           <span>Password</span>
-          <input type="password">
+          <input type="password" name="password_pemilik" required>
         </label>
         <br>
-        <button type="button" class="submit">Masuk</button>
+        <button type="submit" class="submit">Masuk</button>
       </div>
+    </form>  
     </div>
   </div>
 

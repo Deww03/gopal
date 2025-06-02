@@ -2,17 +2,17 @@
 include '../cek_login.php';
 include '../koneksi/koneksi.php';
 
-$id_admin = $_SESSION['id_admin'];
-$nama_admin = $_SESSION['nama_admin'];
-$password_admin = $_SESSION['password_admin'];
-$no_hp_admin = $_SESSION['no_hp_admin'];
+$id_kasir = $_SESSION['id_kasir'];
+$nama_kasir = $_SESSION['nama_kasir'];
+$password_kasir = $_SESSION['password_kasir'];
+$no_hp_kasir = $_SESSION['no_hp_kasir'];
 $jenis_kelamin = $_SESSION['jenis_kelamin'];
-$foto_admin = $_SESSION['foto_admin'];
+$foto_kasir = $_SESSION['foto_kasir'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  $nama_admin = $_POST['nama_admin'];
-  $password_admin = md5($_POST['password_admin']); // Enkripsi password menggunakan md5
-  $no_hp_admin = $_POST['no_hp_admin'];
+  $nama_kasir = $_POST['nama_kasir'];
+  $password_kasir = md5($_POST['password_kasir']); // Enkripsi password menggunakan md5
+  $no_hp_kasir = $_POST['no_hp_kasir'];
   $jenis_kelamin = $_POST['jenis_kelamin'];
 
   if ($_FILES['foto']['name'] != "") {
@@ -22,31 +22,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     move_uploaded_file($foto_tmp, $foto_path);
 
-    $update = mysqli_query($koneksi, "UPDATE admin SET 
-      nama_admin='$nama_admin', 
-      password_admin='$password_admin', 
-      no_hp_admin='$no_hp_admin', 
+    $update = mysqli_query($koneksi, "UPDATE kasir SET 
+      nama_kasir='$nama_kasir', 
+      password_kasir='$password_kasir', 
+      no_hp_kasir='$no_hp_kasir', 
       jenis_kelamin='$jenis_kelamin',
-      foto_admin='$foto_name' 
-      WHERE id_admin='$id_admin'");
+      foto_kasir='$foto_name' 
+      WHERE id_kasir='$id_kasir'");
 
-    $_SESSION['foto_admin'] = $foto_name;
+    $_SESSION['foto_kasir'] = $foto_name;
   } else {
-    $update = mysqli_query($koneksi, "UPDATE admin SET 
-      nama_admin='$nama_admin', 
-      password_admin='$password_admin', 
-      no_hp_admin='$no_hp_admin', 
+    $update = mysqli_query($koneksi, "UPDATE kasir SET 
+      nama_kasir='$nama_kasir', 
+      password_kasir='$password_kasir', 
+      no_hp_kasir='$no_hp_kasir', 
       jenis_kelamin='$jenis_kelamin'
-      WHERE id_admin='$id_admin'");
+      WHERE id_kasir='$id_kasir'");
   }
 
   // Update session
-  $_SESSION['nama_admin'] = $nama_admin;
-  $_SESSION['password_admin'] = $password_admin;
-  $_SESSION['no_hp_admin'] = $no_hp_admin;
+  $_SESSION['nama_kasir'] = $nama_kasir;
+  $_SESSION['password_kasir'] = $password_kasir;
+  $_SESSION['no_hp_kasir'] = $no_hp_kasir;
   $_SESSION['jenis_kelamin'] = $jenis_kelamin;
 
-  header("Location: profil_admin.php?status=edit_berhasil");
+  header("Location: profil_kasir.php?status=edit_berhasil");
   exit;
 }
 ?>
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Dashboard - Gopal</title>
+  <title>Pengguna - Bude Ari</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="../vendors/feather/feather.css">
   <link rel="stylesheet" href="../vendors/mdi/css/materialdesignicons.min.css">
@@ -83,10 +83,10 @@ $pesan = '';
 $warna = 'primary'; // default
 
 if ($status === 'edit_berhasil') {
-    $pesan = 'Profil admin berhasil diperbarui!';
+    $pesan = 'Profil kasir berhasil diperbarui!';
     $warna = 'inverse-success';
 } elseif ($status === 'batal_edit') {
-    $pesan = 'Perubahan profil admin dibatalkan.';
+    $pesan = 'Perubahan profil kasir dibatalkan.';
     $warna = 'inverse-warning';
 }
 
@@ -127,19 +127,19 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="col-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <h4 class="card-title">Profil Admin</h4>
+                  <h4 class="card-title">Profil kasir</h4>
                   <form class="forms-sample" method="POST" enctype="multipart/form-data" action="">
                         <div class="d-flex align-items-start align-items-sm-center gap-4 mb-4">
                           <?php
-                          $foto = mysqli_query($koneksi, "SELECT * FROM admin WHERE id_admin='$id_admin'");
+                          $foto = mysqli_query($koneksi, "SELECT * FROM kasir WHERE id_kasir='$id_kasir'");
                           $foto = mysqli_fetch_assoc($foto);
                           ?>
                           <?php
-                            if ($foto_admin == "") {
+                            if ($foto_kasir == "") {
                             ?>
                               <img src="../images/faces/face6.jpg" alt="user-avatar" class="d-block rounded" height="100" width="100">
                             <?php } else { ?>
-                              <img src="../images/faces/<?php echo $foto_admin; ?>" alt="user-avatar" class="d-block rounded" height="100" width="100">
+                              <img src="../images/faces/<?php echo $foto_kasir; ?>" alt="user-avatar" class="d-block rounded" height="100" width="100">
                             <?php } ?>
                           <div class="button-wrapper">
                             <label for="upload" class="btn btn-inverse-info me-2 mb-4" tabindex="0">
@@ -153,15 +153,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     <div class="form-group">
                       <label for="exampleInputName1">Nama</label>
-                      <input type="text" name="nama_admin" class="form-control" value="<?php echo $nama_admin; ?>">
+                      <input type="text" name="nama_kasir" class="form-control" value="<?php echo $nama_kasir; ?>">
                     </div>
                     <div class="form-group">
                       <label for="exampleInputEmail3">Password</label>
-                      <input type="password" name="password_admin" class="form-control" placeholder="**********" required>
+                      <input type="password" name="password_kasir" class="form-control" placeholder="**********" required>
                     </div>
                     <div class="form-group">
                       <label for="exampleInputPassword4">Nomor HP</label>
-                      <input type="text" name="no_hp_admin" class="form-control" value="<?php echo $no_hp_admin; ?>">
+                      <input type="text" name="no_hp_kasir" class="form-control" value="<?php echo $no_hp_kasir; ?>">
                     </div>
                     <div class="form-group">
                       <label for="exampleSelectGender">Jenis Kelamin</label>
@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
                     <i class="mdi mdi-bell-ring me-2"></i>
-                    <strong class="me-auto">Profil Admin</strong>
+                    <strong class="me-auto">Profil kasir</strong>
                     <small>Baru saja</small>
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>

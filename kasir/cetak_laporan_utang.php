@@ -6,11 +6,11 @@ $tahun = $_GET['tahun'] ?? '';
 $status = $_GET['status'] ?? '';
 
 // Buat filter query
-$query = "SELECT utang.*, pelanggan.nama_pelanggan, admin.nama_admin, 
+$query = "SELECT utang.*, pelanggan.nama_pelanggan, kasir.nama_kasir, 
           IFNULL(SUM(bayar.jumlah_bayar), 0) AS jumlah_bayar
           FROM utang
           LEFT JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
-          LEFT JOIN admin ON utang.id_admin = admin.id_admin
+          LEFT JOIN kasir ON utang.id_kasir = kasir.id_kasir
           LEFT JOIN bayar ON utang.id_utang = bayar.id_utang
           WHERE 1";
 
@@ -76,7 +76,7 @@ $total_bayar = 0;
             <th>No</th>
             <th>Tanggal</th>
             <th>Nama Pelanggan</th>
-            <th>Nama Admin</th>
+            <th>Nama kasir</th>
             <th>Jatuh Tempo</th>
             <th>Jumlah Utang</th>
             <th>Jumlah Bayar</th>
@@ -99,7 +99,7 @@ $total_bayar = 0;
                     <td><?= $no++; ?></td>
                     <td><?= htmlspecialchars($row['tanggal']); ?></td>
                     <td><?= htmlspecialchars($row['nama_pelanggan']); ?></td>
-                    <td><?= htmlspecialchars($row['nama_admin']); ?></td>
+                    <td><?= htmlspecialchars($row['nama_kasir']); ?></td>
                     <td><?= htmlspecialchars($row['jatuh_tempo']); ?></td>
                     <td>Rp <?= number_format($jumlah_utang, 0, ',', '.'); ?></td>
                     <td>Rp <?= number_format($jumlah_bayar, 0, ',', '.'); ?></td>

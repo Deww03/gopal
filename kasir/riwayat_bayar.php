@@ -12,8 +12,8 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT id_pelanggan, nama_pelanggan 
 $today = date('Y-m-d');
 $due_date = date('Y-m-d', strtotime('+60 days'));
 
-// Nama admin dari session
-$nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin';
+// Nama kasir dari session
+$nama_kasir = isset($_SESSION['nama_kasir']) ? $_SESSION['nama_kasir'] : 'kasir';
 
 $id_pelanggan = isset($_GET['id_pelanggan']) ? $_GET['id_pelanggan'] : '';
 $id_utang     = isset($_GET['id_utang']) ? $_GET['id_utang'] : '';
@@ -30,7 +30,7 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT * FROM pelanggan");
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Data Utang - Gopal</title>
+  <title>Data Bayar - Bude Ari</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="../vendors/feather/feather.css">
   <link rel="stylesheet" href="../vendors/mdi/css/materialdesignicons.min.css">
@@ -166,7 +166,7 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT * FROM pelanggan");
                             <thead>
                             <tr>
                                 <th>Tanggal Bayar</th>
-                                <th>Nama Admin</th>
+                                <th>Nama Kasir</th>
                                 <th style="width: 20%;">Jumlah Bayar</th>
                             </tr>
                             </thead>
@@ -179,9 +179,9 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT * FROM pelanggan");
                             $jumlah_utang = $utang_row['jumlah_utang'];
 
                             // Query untuk riwayat pembayaran
-                            $query = "SELECT bayar.*, admin.nama_admin
+                            $query = "SELECT bayar.*, kasir.nama_kasir
                                         FROM bayar
-                                        LEFT JOIN admin ON bayar.id_admin = admin.id_admin
+                                        LEFT JOIN kasir ON bayar.id_kasir = kasir.id_kasir
                                         WHERE bayar.id_utang = '$id_utang'
                                         ORDER BY bayar.tanggal_bayar DESC";
                             $result = mysqli_query($koneksi, $query);
@@ -191,7 +191,7 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT * FROM pelanggan");
                                 $total_bayar += $row['jumlah_bayar'];
                                 echo "<tr>";
                                 echo "<td>" . htmlspecialchars($row['tanggal_bayar']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['nama_admin']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['nama_kasir']) . "</td>";
                                 echo "<td>Rp " . number_format($row['jumlah_bayar'], 0, ',', '.') . "</td>";
                                 echo "</tr>";
                             }

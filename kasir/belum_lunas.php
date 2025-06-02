@@ -12,8 +12,8 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT id_pelanggan, nama_pelanggan 
 $today = date('Y-m-d');
 $due_date = date('Y-m-d', strtotime('+60 days'));
 
-// Nama admin dari session
-$nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin';
+// Nama kasir dari session
+$nama_kasir = isset($_SESSION['nama_kasir']) ? $_SESSION['nama_kasir'] : 'kasir';
 ?>
 
 <!DOCTYPE html>
@@ -24,7 +24,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Data Utang - Gopal</title>
+  <title>Data Utang - Bude Ari</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="../vendors/feather/feather.css">
   <link rel="stylesheet" href="../vendors/mdi/css/materialdesignicons.min.css">
@@ -101,7 +101,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
               <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="mb-0">Utang yang sudah lunas</h4>
+                        <h4 class="mb-0">Utang yang belum lunas</h4>
                     </div>
 
                     <!-- 🔍 Input Pencarian -->
@@ -120,7 +120,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                           <button type="submit" class="btn btn-inverse-info" style="padding: 0.5rem 1rem;">
                               Cari
                           </button>
-                          <a href="sudah_lunas.php" class="btn btn-inverse-danger" style="padding: 0.5rem 1rem;">
+                          <a href="belum_lunas.php" class="btn btn-inverse-danger" style="padding: 0.5rem 1rem;">
                               Batal Cari
                           </a>
                       <?php } else { ?>
@@ -137,7 +137,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                           <tr>
                             <th>Tanggal</th>
                             <th>Pelanggan</th>
-                            <th>Admin</th>
+                            <th>Kasir</th>
                             <th>Jatuh Tempo</th>
                             <th>Jumlah Utang</th>
                             <th>Jumlah Bayar</th>
@@ -161,10 +161,10 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                               $query_total = "SELECT COUNT(*) 
                                               FROM utang 
                                               LEFT JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
-                                              LEFT JOIN admin ON utang.id_admin = admin.id_admin
-                                              WHERE utang.status = 'sudah_lunas' AND (
+                                              LEFT JOIN kasir ON utang.id_kasir = kasir.id_kasir
+                                              WHERE utang.status = 'belum_lunas' AND (
                                                   pelanggan.nama_pelanggan LIKE '%$search%' OR 
-                                                  admin.nama_admin LIKE '%$search%' OR
+                                                  kasir.nama_kasir LIKE '%$search%' OR
                                                   utang.tanggal LIKE '%$search%' OR
                                                   utang.jumlah_utang LIKE '%$search%'
                                               )";
@@ -172,15 +172,15 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                               $row_total = mysqli_fetch_array($result_total);
                               $total_records = $row_total[0];
 
-                              $query = "SELECT utang.*, pelanggan.nama_pelanggan, admin.nama_admin,
+                              $query = "SELECT utang.*, pelanggan.nama_pelanggan, kasir.nama_kasir,
                                               IFNULL(SUM(bayar.jumlah_bayar), 0) AS jumlah_bayar
                                         FROM utang
                                         LEFT JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
-                                        LEFT JOIN admin ON utang.id_admin = admin.id_admin
+                                        LEFT JOIN kasir ON utang.id_kasir = kasir.id_kasir
                                         LEFT JOIN bayar ON utang.id_utang = bayar.id_utang
-                                        WHERE utang.status = 'sudah_lunas' AND (
+                                        WHERE utang.status = 'belum_lunas' AND (
                                             pelanggan.nama_pelanggan LIKE '%$search%' OR 
-                                            admin.nama_admin LIKE '%$search%' OR
+                                            kasir.nama_kasir LIKE '%$search%' OR
                                             utang.tanggal LIKE '%$search%' OR
                                             utang.jumlah_utang LIKE '%$search%'
                                         )
@@ -190,6 +190,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                                         ";
 
                               $result = mysqli_query($koneksi, $query);
+
                               $start_range = 1;
                               $end_range = $total_records;
 
@@ -197,19 +198,19 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                               // Query total jika tidak ada pencarian
                               $query_total = "SELECT COUNT(*) 
                                               FROM utang 
-                                              WHERE status = 'sudah_lunas'";
+                                              WHERE status = 'belum_lunas'";
                               $result_total = mysqli_query($koneksi, $query_total);
                               $row_total = mysqli_fetch_array($result_total);
                               $total_records = $row_total[0];
                               $total_pages = ceil($total_records / $limit);
 
-                              $query = "SELECT utang.*, pelanggan.nama_pelanggan, admin.nama_admin,
+                              $query = "SELECT utang.*, pelanggan.nama_pelanggan, kasir.nama_kasir,
                                         IFNULL(SUM(bayar.jumlah_bayar), 0) AS jumlah_bayar
                                         FROM utang
                                         LEFT JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
-                                        LEFT JOIN admin ON utang.id_admin = admin.id_admin
+                                        LEFT JOIN kasir ON utang.id_kasir = kasir.id_kasir
                                         LEFT JOIN bayar ON utang.id_utang = bayar.id_utang
-                                        WHERE utang.status = 'sudah_lunas'
+                                        WHERE utang.status = 'belum_lunas'
                                         GROUP BY utang.id_utang
                                         ORDER BY utang.id_utang DESC
                                         LIMIT $start, $limit
@@ -228,7 +229,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                             echo "<tr>";
                             echo "<td>" . htmlspecialchars($row['tanggal']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['nama_pelanggan']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['nama_admin']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['nama_kasir']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['jatuh_tempo']) . "</td>";
                             echo "<td>Rp " . number_format($row['jumlah_utang'], 0, ',', '.') . "</td>";
                             echo "<td>Rp " . number_format($jumlah_bayar, 0, ',', '.') . "</td>";

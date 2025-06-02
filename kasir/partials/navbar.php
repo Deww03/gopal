@@ -18,8 +18,8 @@
       <div class="navbar-menu-wrapper d-flex align-items-top"> 
         <ul class="navbar-nav">
           <li class="nav-item font-weight-semibold d-none d-lg-block ms-0">
-            <h1 class="welcome-text">Hallo, <span class="text-black fw-bold"><?php echo $_SESSION['nama_admin']; ?></span></h1>
-            <h3 class="welcome-sub-text">Admin</h3>
+            <h1 class="welcome-text">Hallo, <span class="text-black fw-bold"><?php echo $_SESSION['nama_kasir']; ?></span></h1>
+            <h3 class="welcome-sub-text">Kasir</h3>
           </li>
         </ul>
         <ul class="navbar-nav ms-auto">
@@ -88,31 +88,31 @@
           <li class="nav-item dropdown d-none d-lg-block user-dropdown">
             <a class="nav-link" id="UserDropdown" href="../#" data-bs-toggle="dropdown" aria-expanded="false">
               <?php
-                $id_admin = $_SESSION['id_admin'];
-                $foto_admin = $_SESSION['foto_admin'];
-                $foto = mysqli_query($koneksi, "SELECT * FROM admin WHERE id_admin='$id_admin'");
+                $id_kasir = $_SESSION['id_kasir'];
+                $foto_kasir = $_SESSION['foto_kasir'];
+                $foto = mysqli_query($koneksi, "SELECT * FROM kasir WHERE id_kasir='$id_kasir'");
                 $foto = mysqli_fetch_assoc($foto);
               ?>
               <?php
-              if ($foto_admin == "") {
+              if ($foto_kasir == "") {
               ?>
               <img class="img-xs rounded-circle" src="../images/faces/face6.jpg" alt="Profile image">
               <?php } else { ?>
-              <img class="img-xs rounded-circle" src="../images/faces/<?php echo $foto_admin; ?>" alt="Profile image" >
+              <img class="img-xs rounded-circle" src="../images/faces/<?php echo $foto_kasir; ?>" alt="Profile image" >
               <?php } ?>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
               <div class="dropdown-header text-center">
                 <?php
-                if ($foto_admin == "") {
+                if ($foto_kasir == "") {
                 ?>
                 <img class="img-xs rounded-circle" src="../images/faces/face6.jpg" alt="Profile image">
                 <?php } else { ?>
-                <img class="img-xs rounded-circle" src="../images/faces/<?php echo $foto_admin; ?>" alt="Profile image" >
+                <img class="img-xs rounded-circle" src="../images/faces/<?php echo $foto_kasir; ?>" alt="Profile image" >
                 <?php } ?>
-                <p class="mb-1 mt-3 font-weight-semibold"><?php echo $_SESSION['nama_admin']; ?></p>
-                <p class="fw-light text-muted mb-0">Admin</p>
+                <p class="mb-1 mt-3 font-weight-semibold"><?php echo $_SESSION['nama_kasir']; ?></p>
+                <p class="fw-light text-muted mb-0">Kasir</p>
               </div>
-              <a class="dropdown-item" href="profil_admin.php"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i>Profil Saya</a>
+              <a class="dropdown-item" href="profil_kasir.php"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i>Profil Saya</a>
               <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Keluar</a>
             </div>
           </li>
@@ -135,7 +135,7 @@
             <p>Apakah Anda yakin ingin keluar?</p>
           </div>
           <div class="modal-footer">
-            <a href="../logout_admin.php" class="btn btn-inverse-danger">Keluar</a>
+            <a href="../logout_kasir.php" class="btn btn-inverse-danger">Keluar</a>
             <button type="button" class="btn btn-inverse-info" data-bs-dismiss="modal">Batal</button>
           </div>
         </div>

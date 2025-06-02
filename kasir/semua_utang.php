@@ -12,8 +12,8 @@ $pelanggan_result = mysqli_query($koneksi, "SELECT id_pelanggan, nama_pelanggan 
 $today = date('Y-m-d');
 $due_date = date('Y-m-d', strtotime('+60 days'));
 
-// Nama admin dari session
-$nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin';
+// Nama kasir dari session
+$nama_kasir = isset($_SESSION['nama_kasir']) ? $_SESSION['nama_kasir'] : 'kasir';
 ?>
 
 <!DOCTYPE html>
@@ -24,7 +24,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Data Utang - Gopal</title>
+  <title>Data Utang - Bude Ari</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="../vendors/feather/feather.css">
   <link rel="stylesheet" href="../vendors/mdi/css/materialdesignicons.min.css">
@@ -171,11 +171,11 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                                     </select>
                                   </div>
                                 </div>
-                                <!-- Admin (readonly) -->
+                                <!-- kasir (readonly) -->
                                 <div class="col-sm-12">
                                   <div class="form-group form-group-default">
-                                    <label>Nama Admin</label>
-                                    <input type="text" name="nama_admin" class="form-control" value="<?= $nama_admin ?>" readonly>
+                                    <label>Nama Kasir</label>
+                                    <input type="text" name="nama_kasir" class="form-control" value="<?= $nama_kasir ?>" readonly>
                                   </div>
                                 </div>
                                 <!-- Jatuh Tempo -->
@@ -214,7 +214,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                           <tr>
                             <th>Tanggal</th>
                             <th>Pelanggan</th>
-                            <th>Admin</th>
+                            <th>Kasir</th>
                             <th>Jatuh Tempo</th>
                             <th>Jumlah Utang</th>
                             <th>Jumlah Bayar</th>
@@ -238,10 +238,10 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                               $query_total = "SELECT COUNT(*) 
                                               FROM utang 
                                               LEFT JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
-                                              LEFT JOIN admin ON utang.id_admin = admin.id_admin
+                                              LEFT JOIN kasir ON utang.id_kasir = kasir.id_kasir
                                               WHERE 
                                                   pelanggan.nama_pelanggan LIKE '%$search%' OR 
-                                                  admin.nama_admin LIKE '%$search%' OR
+                                                  kasir.nama_kasir LIKE '%$search%' OR
                                                   utang.status LIKE '%$search%' OR
                                                   utang.tanggal LIKE '%$search%' OR
                                                   utang.jumlah_utang LIKE '%$search%'";
@@ -249,15 +249,15 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                               $row_total = mysqli_fetch_array($result_total);
                               $total_records = $row_total[0];
 
-                              $query = "SELECT utang.*, pelanggan.nama_pelanggan, admin.nama_admin,
+                              $query = "SELECT utang.*, pelanggan.nama_pelanggan, kasir.nama_kasir,
                                               IFNULL(SUM(bayar.jumlah_bayar), 0) AS jumlah_bayar
                                         FROM utang
                                         LEFT JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
-                                        LEFT JOIN admin ON utang.id_admin = admin.id_admin
+                                        LEFT JOIN kasir ON utang.id_kasir = kasir.id_kasir
                                         LEFT JOIN bayar ON utang.id_utang = bayar.id_utang
                                         WHERE 
                                             pelanggan.nama_pelanggan LIKE '%$search%' OR 
-                                            admin.nama_admin LIKE '%$search%' OR
+                                            kasir.nama_kasir LIKE '%$search%' OR
                                             utang.status LIKE '%$search%' OR
                                             utang.tanggal LIKE '%$search%' OR
                                             utang.jumlah_utang LIKE '$search'
@@ -278,11 +278,11 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                               $total_records = $row_total[0];
                               $total_pages = ceil($total_records / $limit);
 
-                              $query = "SELECT utang.*, pelanggan.nama_pelanggan, admin.nama_admin,
+                              $query = "SELECT utang.*, pelanggan.nama_pelanggan, kasir.nama_kasir,
                                         IFNULL(SUM(bayar.jumlah_bayar), 0) AS jumlah_bayar
                                         FROM utang
                                         LEFT JOIN pelanggan ON utang.id_pelanggan = pelanggan.id_pelanggan
-                                        LEFT JOIN admin ON utang.id_admin = admin.id_admin
+                                        LEFT JOIN kasir ON utang.id_kasir = kasir.id_kasir
                                         LEFT JOIN bayar ON utang.id_utang = bayar.id_utang
                                         GROUP BY utang.id_utang
                                         ORDER BY utang.id_utang DESC
@@ -302,7 +302,7 @@ $nama_admin = isset($_SESSION['nama_admin']) ? $_SESSION['nama_admin'] : 'Admin'
                             echo "<tr>";
                             echo "<td>" . htmlspecialchars($row['tanggal']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['nama_pelanggan']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['nama_admin']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['nama_kasir']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['jatuh_tempo']) . "</td>";
                             echo "<td>Rp " . number_format($row['jumlah_utang'], 0, ',', '.') . "</td>";
                             echo "<td>Rp " . number_format($jumlah_bayar, 0, ',', '.') . "</td>";

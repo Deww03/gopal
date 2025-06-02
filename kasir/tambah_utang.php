@@ -1,13 +1,13 @@
 <?php
-include '../cek_login.php';  // Pastikan admin sudah login
+include '../cek_login.php';  // Pastikan kasir sudah login
 include '../koneksi/koneksi.php';
 
 // Ambil data dari form
 $id_pelanggan = $_POST['id_pelanggan'];
 $jumlah_utang = $_POST['jumlah_utang'];
 
-// Ambil ID admin dari session yang sudah login
-$id_admin = $_SESSION['id_admin']; // ID admin dari sesi
+// Ambil ID kasir dari session yang sudah login
+$id_kasir = $_SESSION['id_kasir']; // ID kasir dari sesi
 $tanggal = date('Y-m-d'); // Tanggal hari ini
 $jatuh_tempo = date('Y-m-d', strtotime('+1 days')); // 60 hari setelah tanggal hari ini
 $status = 'belum_lunas'; // Status default
@@ -34,8 +34,8 @@ if ($data_cek['total'] > 0) {
 
 // Query untuk menyimpan data utang
 mysqli_query($koneksi, 
-    "INSERT INTO utang (id_pelanggan, id_admin, tanggal, jatuh_tempo, jumlah_utang, status) 
-     VALUES ('$id_pelanggan', '$id_admin', '$tanggal', '$jatuh_tempo', '$jumlah_utang', '$status')")
+    "INSERT INTO utang (id_pelanggan, id_kasir, tanggal, jatuh_tempo, jumlah_utang, status) 
+     VALUES ('$id_pelanggan', '$id_kasir', '$tanggal', '$jatuh_tempo', '$jumlah_utang', '$status')")
 or die(mysqli_error($koneksi));
 
 // Redirect ke halaman data utang dengan pesan sukses
